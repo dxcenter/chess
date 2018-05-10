@@ -1,0 +1,7 @@
+users:
+  -
+    login: someLoginHere
+    password: somePasswordHere
+  -
+    login: anotherLogin
+    password: anotherPassword
