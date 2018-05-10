@@ -1,8 +1,8 @@
 package config
 
 import (
-	"io/ioutil"
 	"gopkg.in/yaml.v2"
+	"io/ioutil"
 )
 
 type User struct {
@@ -13,7 +13,8 @@ type User struct {
 type Users []User
 
 type Config struct {
-	Users Users `yaml:"users"`
+	Secret []byte `yaml:"secret"`
+	Users  Users  `yaml:"users"`
 }
 
 var cfg Config

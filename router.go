@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	m "github.com/dxcenter/chess/serverMethods"
+	"github.com/gin-gonic/gin"
 )
 
 func setupRouter(r *gin.Engine) {
@@ -10,5 +10,9 @@ func setupRouter(r *gin.Engine) {
 	r.StaticFile("/", "frontend/index.html")
 
 	r.GET("/ping.json", m.Ping)
-	r.GET("/auth.json", m.Auth)
+
+	// JWT
+	jwt := newJwtMiddleware()
+	r.GET("/auth.json", jwt.LoginHandler)
+	r.GET("/refresh_token.json", jwt.RefreshHandler)
 }

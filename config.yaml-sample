@@ -1,3 +1,4 @@
+secret: someSecretHere
 users:
   -
     login: someLoginHere
