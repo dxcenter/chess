@@ -13,7 +13,7 @@ type User struct {
 type Users []User
 
 type Config struct {
-	Secret []byte `yaml:"secret"`
+	Secret string `yaml:"secret"`
 	Users  Users  `yaml:"users"`
 }
 

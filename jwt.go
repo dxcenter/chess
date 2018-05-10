@@ -1,30 +1,30 @@
 package main
 
 import (
-	jwt "github.com/appleboy/gin-jwt"
-	cfg "github.com/dxcenter/chess/config"
 	"github.com/gin-gonic/gin"
-	"strings"
+	cfg "github.com/dxcenter/chess/config"
+	jwt "github.com/appleboy/gin-jwt"
 	"time"
+	"strings"
 )
 
 func newJwtMiddleware() *jwt.GinJWTMiddleware {
 	return &jwt.GinJWTMiddleware{
 		Realm:      "DXChess",
-		Key:        cfg.Get().Secret,
+		Key:        []byte(cfg.Get().Secret),
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
-		Authenticator: func(userId string, password string, c *gin.Context) (string, bool) {
-			userId = strings.ToLower(userId)
+		Authenticator: func(login string, password string, c *gin.Context) (string, bool) {
+			login = strings.ToLower(login)
 			for _, user := range cfg.Get().Users {
-				if userId == strings.ToLower(user.Login) && password == user.Password {
-					return userId, true
+				if login == strings.ToLower(user.Login) && password == user.Password {
+					return login, true
 				}
 			}
 
-			return userId, false
+			return login, false
 		},
-		Authorizator: func(userId string, c *gin.Context) bool {
+		Authorizator: func(login string, c *gin.Context) bool {
 			return true
 		},
 		Unauthorized: func(c *gin.Context, code int, message string) {
