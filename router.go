@@ -6,16 +6,39 @@ import (
 )
 
 func setupRouter(r *gin.Engine) {
-	r.Static("/frontend", "frontend/build")
-	r.Static("/static", "frontend/build/static")
-	r.StaticFile("/", "frontend/build/index.html")
-	r.StaticFile("/login", "frontend/build/index.html")
+	devMode := true
 
-	for _, file := range []string{"index.html", "service-worker.js"} {
-		r.StaticFile(file, "frontend/build/"+file)
+	// My methods
+	r.GET("/ping.json",        m.Ping)
+	r.GET("/game_status.json", m.GameStatus)
+	r.POST("/new_game.json",   m.NewGame)
+	r.POST("/move.json",       m.Move)
+
+	// Frontend
+	if !devMode {
+		r.Static("/frontend", "frontend/build")
+		r.Static("/static", "frontend/build/static")
+		r.Static("/css", "frontend/build/css")
+		r.StaticFile("/", "frontend/build/index.html")
+		r.StaticFile("/login", "frontend/build/index.html")
+		for _, file := range []string{"index.html", "service-worker.js"} {
+			r.StaticFile(file, "frontend/build/"+file)
+		}
 	}
 
-	r.GET("/ping.json", m.Ping)
+	// node.js
+	r.GET("/sockjs-node/:id1/:id2/websocket", m.ProxyToNodejs)
+	if devMode {
+		r.GET("/", m.ProxyToNodejs)
+		r.("/frontend", "frontend/build")
+		r.("/static", "frontend/build/static")
+		r.("/css", "frontend/build/css")
+		r.GET("/", m.ProxyToNodejs)
+		r.GET("/login", m.ProxyToNodejs)
+		for _, file := range []string{"index.html", "service-worker.js"} {
+			r.GET("/"+file, m.ProxyToNodejs)
+		}
+	}
 
 	// JWT
 	jwt := newJwtMiddleware()
