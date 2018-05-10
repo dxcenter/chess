@@ -1,16 +1,19 @@
 package game
 
 import (
+	"fmt"
 	"github.com/notnil/chess"
+)
+
+var (
+	ErrGameNotStarted = fmt.Errorf("game is not started")
 )
 
 var g *chess.Game
 
 func NewGame() {
 	g = chess.NewGame()
-}
-func Get() chess.Game {
-	return *g
+	chess.UseNotation(&chess.LongAlgebraicNotation{})(g)
 }
 
 type Status struct {
@@ -19,6 +22,9 @@ type Status struct {
 }
 
 func GetStatus() Status {
+	if g == nil {
+		return Status{}
+	}
 	return Status{
 		History:   g.Positions(),
 		SquareMap: g.Position().Board().SquareMap(),
@@ -26,5 +32,8 @@ func GetStatus() Status {
 }
 
 func MoveStr(move string) error {
+	if g == nil {
+		return ErrGameNotStarted
+	}
 	return g.MoveStr(move)
 }

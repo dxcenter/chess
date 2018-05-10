@@ -27,12 +27,14 @@ func setupRouter(r *gin.Engine) {
 	}
 
 	// node.js
-	r.GET("/sockjs-node/:id1/:id2/websocket", m.ProxyToNodejs)
 	if devMode {
-		r.GET("/", m.ProxyToNodejs)
-		r.("/frontend", "frontend/build")
-		r.("/static", "frontend/build/static")
-		r.("/css", "frontend/build/css")
+		r.POST("/sockjs-node/*rest", m.ProxyToNodejs)
+		r.GET("/sockjs-node/*rest", m.ProxyToNodejs)
+		r.GET("/__webpack_dev_server__/*rest", m.ProxyToNodejs)
+
+		r.GET("/frontend/*rest", m.ProxyToNodejs)
+		r.GET("/static/*rest", m.ProxyToNodejs)
+		r.GET("/css/*rest", m.ProxyToNodejs)
 		r.GET("/", m.ProxyToNodejs)
 		r.GET("/login", m.ProxyToNodejs)
 		for _, file := range []string{"index.html", "service-worker.js"} {
