@@ -1,2 +1,3 @@
 chess
 config.yaml
+models/*_reform.go
