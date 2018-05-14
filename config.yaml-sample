@@ -1,8 +1,22 @@
 secret: someSecretHere
-users:
+user_sources:
   -
-    login: someLoginHere
-    password: somePasswordHere
+    type: internal
+    data:
+      users:
+        -
+          login: someLoginHere
+          password: somePasswordHere
+        -
+          login: anotherLogin
+          password: anotherPassword
   -
-    login: anotherLogin
-    password: anotherPassword
+    type: db
+    data:
+      driver: mysql
+      protocol: tcp
+      host: localhost
+      port: 3306
+      db: chess
+      user: chess
+      password: aPassword

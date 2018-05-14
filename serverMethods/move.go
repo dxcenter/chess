@@ -1,32 +1,34 @@
 package serverMethods
 
 import (
-	"fmt"
-	g "github.com/dxcenter/chess/game"
+	m "github.com/dxcenter/chess/models"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type moveParams struct {
-	Move string `json:"move"`
+	GameId int    `json:"game_id"`
+	Move   string `json:"move"`
 }
 
 func Move(c *gin.Context) {
 	var json moveParams
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
 
-	moveError := g.MoveStr(json.Move)
+	game := m.GetGame(json.GameId)
+	moveError := game.MoveStr(json.Move)
 	if moveError != nil {
 		c.JSON(200, gin.H{
-			"GameStatus": g.GetStatus(),
+			"GameStatus": game.GetStatus(),
 			"MoveError":  moveError.Error(),
 		})
 		return
 	}
-	fmt.Println("move", json.Move, moveError)
 	c.JSON(200, gin.H{
-		"GameStatus": g.GetStatus(),
+		"GameStatus": game.GetStatus(),
 	})
+
 }

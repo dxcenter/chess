@@ -2,9 +2,9 @@ package jwt
 
 import (
 	ginJwt "github.com/appleboy/gin-jwt"
+	auth "github.com/dxcenter/chess/auth"
 	cfg "github.com/dxcenter/chess/config"
 	"github.com/gin-gonic/gin"
-	"strings"
 	"time"
 )
 
@@ -14,21 +14,14 @@ func GetJwtMiddleware() *ginJwt.GinJWTMiddleware {
 	return jwt
 }
 
-func InitJwtMiddleware() {
+func init() {
 	jwt = &ginJwt.GinJWTMiddleware{
 		Realm:      "DXChess",
 		Key:        []byte(cfg.Get().Secret),
 		Timeout:    time.Hour,
 		MaxRefresh: time.Hour,
 		Authenticator: func(login string, password string, c *gin.Context) (string, bool) {
-			login = strings.ToLower(login)
-			for _, user := range cfg.Get().Users {
-				if login == strings.ToLower(user.Login) && password == user.Password {
-					return login, true
-				}
-			}
-
-			return login, false
+			return auth.SignIn(login, password)
 		},
 		Authorizator: func(login string, c *gin.Context) bool {
 			return true

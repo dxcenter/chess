@@ -3,6 +3,7 @@ package models
 //go:generate reform
 
 import (
+	"database/sql"
 	"fmt"
 	"github.com/notnil/chess"
 )
@@ -15,23 +16,57 @@ var (
 type game struct {
 	engine *chess.Game `reform:"-"`
 
-	Id            int    `reform:"id,pk"`
-	PlayersPairId int    `reform:"players_pair_id"`
-	Status        string `reform:"status"`
+	Id              int    `reform:"id,pk"`
+	PlayersPairId   int    `reform:"players_pair_id"`
+	Status          string `reform:"status"`
+	InvitedPlayerId *int   `reform:"invited_player_id"`
 }
 
-func NewGame(playerId0, playerId1 int) (result *game) {
-	result = &game{
+var (
+	games        map[int]*game
+	updatedGames map[int]*game
+)
+
+func init() {
+	games = map[int]*game{}
+	updatedGames = map[int]*game{}
+}
+
+func NewGame(initiatorPlayerId, invitedPlayerId int) *game {
+	result := &game{
 		engine: chess.NewGame(),
 	}
 
-	result.setPlayersPair(player0, player1)
+	result.InvitedPlayerId = &invitedPlayerId
+	result.setPlayersPair(initiatorPlayerId, invitedPlayerId)
 	err := result.Save()
 	if err != nil {
-		checkErr(err)
-		return nil
+		panic(err)
 	}
+
 	return result
+}
+
+func prefetchGame(gameId int) bool {
+	if games[gameId] != nil {
+		return true
+	}
+
+	game, err := Game.First(gameId)
+	if err == sql.ErrNoRows {
+		return false
+	}
+	if err != nil {
+		panic(err)
+	}
+
+	games[gameId] = &game
+	return true
+}
+
+func GetGame(gameId int) *game {
+	prefetchGame(gameId)
+	return games[gameId]
 }
 
 type Status struct {
@@ -50,16 +85,13 @@ func (g game) wrapperStatus(f func() Status) Status {
 	return f()
 }
 
-func (g game) wrapperError(f func() error) Error {
+func (g game) wrapperError(f func() error) error {
 	g.check()
 	return f()
 }
 
 func (g game) GetStatus() Status {
-	return g.wrapperStatus(func() {
-		if g == nil {
-			return Status{}
-		}
+	return g.wrapperStatus(func() Status {
 		return Status{
 			History:   g.engine.Positions(),
 			SquareMap: g.engine.Position().Board().SquareMap(),
@@ -72,10 +104,7 @@ func (g *game) setPlayersPair(playerId0, playerId1 int) {
 }
 
 func (g *game) MoveStr(move string) error {
-	return g.wrapperError(func() {
-		if g == nil {
-			return ErrGameNotStarted
-		}
+	return g.wrapperError(func() error {
 		return g.engine.MoveStr(move)
 	})
 }
