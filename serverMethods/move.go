@@ -23,6 +23,7 @@ func Move(c *gin.Context) {
 			"GameStatus": g.GetStatus(),
 			"MoveError":  moveError.Error(),
 		})
+		return
 	}
 	fmt.Println("move", json.Move, moveError)
 	c.JSON(200, gin.H{
