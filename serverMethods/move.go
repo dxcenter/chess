@@ -18,9 +18,14 @@ func Move(c *gin.Context) {
 	}
 
 	moveError := g.MoveStr(json.Move)
+	if moveError != nil {
+		c.JSON(200, gin.H{
+			"GameStatus": g.GetStatus(),
+			"MoveError":  moveError.Error(),
+		})
+	}
 	fmt.Println("move", json.Move, moveError)
 	c.JSON(200, gin.H{
 		"GameStatus": g.GetStatus(),
-		"MoveError":  moveError,
 	})
 }
