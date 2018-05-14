@@ -12,16 +12,16 @@ func setupRouter(r *gin.Engine) {
 	jwtMiddleware := jwt.GetJwtMiddleware()
 	authed := r.Group("/")
 	authed.Use(jwtMiddleware.MiddlewareFunc()) // require to be authed
-	authed.Use(mw.Authed) // some routines for an already authed
+	authed.Use(mw.Authed)                      // some routines for an already authed
 	r.POST("/auth.json", jwtMiddleware.LoginHandler)
 	r.POST("/refresh_token.json", jwtMiddleware.RefreshHandler)
 
 	// My methods
 	r.GET("/ping.json", m.Ping)
-	authed.GET("/whoami.json",      m.Whoami)
+	authed.GET("/whoami.json", m.Whoami)
 	authed.GET("/game_status.json", m.GameStatus)
-	authed.POST("/new_game.json",   m.NewGame)
-	authed.POST("/move.json",       m.Move)
+	authed.POST("/new_game.json", m.NewGame)
+	authed.POST("/move.json", m.Move)
 
 	// Frontend
 	r.Static("/frontend", "frontend/build")

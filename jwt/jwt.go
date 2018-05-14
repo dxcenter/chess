@@ -1,11 +1,11 @@
 package jwt
 
 import (
-	"github.com/gin-gonic/gin"
-	cfg "github.com/dxcenter/chess/config"
 	ginJwt "github.com/appleboy/gin-jwt"
-	"time"
+	cfg "github.com/dxcenter/chess/config"
+	"github.com/gin-gonic/gin"
 	"strings"
+	"time"
 )
 
 var jwt *ginJwt.GinJWTMiddleware
@@ -57,4 +57,3 @@ func InitJwtMiddleware() {
 		TimeFunc: time.Now,
 	}
 }
-
