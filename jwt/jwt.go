@@ -1,15 +1,21 @@
-package main
+package jwt
 
 import (
 	"github.com/gin-gonic/gin"
 	cfg "github.com/dxcenter/chess/config"
-	jwt "github.com/appleboy/gin-jwt"
+	ginJwt "github.com/appleboy/gin-jwt"
 	"time"
 	"strings"
 )
 
-func newJwtMiddleware() *jwt.GinJWTMiddleware {
-	return &jwt.GinJWTMiddleware{
+var jwt *ginJwt.GinJWTMiddleware
+
+func GetJwtMiddleware() *ginJwt.GinJWTMiddleware {
+	return jwt
+}
+
+func InitJwtMiddleware() {
+	jwt = &ginJwt.GinJWTMiddleware{
 		Realm:      "DXChess",
 		Key:        []byte(cfg.Get().Secret),
 		Timeout:    time.Hour,
@@ -51,3 +57,4 @@ func newJwtMiddleware() *jwt.GinJWTMiddleware {
 		TimeFunc: time.Now,
 	}
 }
+
