@@ -13,7 +13,8 @@ type InternalUserSource struct {
 	Users cfg.Users
 }
 
-func NewInternalUserSource(userSourceRaw cfg.UserSource) (result InternalUserSource) {
+func NewInternalUserSource(userSourceRaw cfg.UserSource) (result *InternalUserSource) {
+	result = &InternalUserSource{}
 	result.Users = userSourceRaw.Data.ToInternalUserSourceData().Users
 	return
 }

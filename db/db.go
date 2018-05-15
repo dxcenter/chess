@@ -45,6 +45,10 @@ func GetDB(dbBlockName string) (db *reform.DB) {
 	return dbs[dbBlockName]
 }
 
+func printf(format string, args ...interface{}) {
+	fmt.Printf(format+"\n", args...)
+}
+
 func initDbByConnectionString(params InitDBParams, connectionString string) *reform.DB {
 	db, err := sql.Open(params.Driver, connectionString)
 	if err != nil {
@@ -53,10 +57,9 @@ func initDbByConnectionString(params InitDBParams, connectionString string) *ref
 
 	setupDb(db, params.Driver)
 
-	//logger := reform.NewPrintfLogger(revel.TRACE.Printf)
-	logger := smartLogger{dbName: params.Db, traceLogger: nil, errorLogger: nil}
-	logger.SetTraceEnable(false)
-	logger.SetErrorEnable(false)
+	logger := smartLogger{dbName: params.Db, traceLogger: reform.NewPrintfLogger(printf), errorLogger: reform.NewPrintfLogger(printf)}
+	logger.SetTraceEnable(true)
+	logger.SetErrorEnable(true)
 
 	switch params.Driver {
 	case "mysql":

@@ -16,7 +16,8 @@ type DbUserSource struct {
 	db *reform.DB
 }
 
-func NewDbUserSource(userSourceRaw cfg.UserSource) (result DbUserSource) {
+func NewDbUserSource(userSourceRaw cfg.UserSource) (result *DbUserSource) {
+	result = &DbUserSource{}
 	dbBlockName := userSourceRaw.Data.ToDbUserSourceData()
 	result.db = db.GetDB(string(dbBlockName))
 	return
@@ -38,12 +39,12 @@ func GetInternalDynamicUserSource() *DbUserSource {
 	myInternalDb := db.GetDB(cfg.Get().MyDb)
 
 	for _, userSourceI := range userSources {
-		userSource, ok := userSourceI.(DbUserSource)
+		userSource, ok := userSourceI.(*DbUserSource)
 		if !ok {
 			continue
 		}
 		if userSource.db == myInternalDb {
-			return &userSource
+			return userSource
 		}
 	}
 

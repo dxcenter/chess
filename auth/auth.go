@@ -16,7 +16,7 @@ type UserSourceBase struct {
 func (u UserSourceBase) GetName() string {
 	return u.Name
 }
-func (u UserSourceBase) SetName(newName string) {
+func (u *UserSourceBase) SetName(newName string) {
 	u.Name = newName
 }
 

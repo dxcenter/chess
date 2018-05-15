@@ -16,9 +16,9 @@ import (
 //reform:players
 type player struct {
 	Id           int     `reform:"id,pk"`
-	Nickname     *string `reform:"nickname,unique"`
-	PasswordHash *string `reform:"password_hash"`
-	Source       *string `reform:"source,index"`
+	Nickname     *string `reform:"nickname" sql:"unique_index" sql_size:"255"`
+	PasswordHash *string `reform:"password_hash" sql_size:"255"`
+	Source       *string `reform:"source" sql:"index" sql_size:"255"`
 }
 
 func NewPlayer() *player {

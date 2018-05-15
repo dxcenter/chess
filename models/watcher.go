@@ -5,6 +5,6 @@ package models
 //reform:watchers
 type watcher struct {
 	Id       int `reform:"id,pk"`
-	PlayerId int `reform:"player_id"`
-	GameId   int `reform:"game_id"`
+	PlayerId int `reform:"player_id" sql:"index"`
+	GameId   int `reform:"game_id" sql:"index"`
 }
