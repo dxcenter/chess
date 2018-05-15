@@ -7,7 +7,7 @@ import (
 )
 
 type newGameParams struct {
-	InvitedPlayerId int `json:"invitied_player_id,omitempty"`
+	InvitedPlayerId int `json:"invited_player_id"`
 }
 
 func NewGame(c *gin.Context) {
@@ -21,6 +21,7 @@ func NewGame(c *gin.Context) {
 	game := me.NewGame(json.InvitedPlayerId)
 
 	c.JSON(200, gin.H{
+		"GameId": game.Id,
 		"GameStatus": game.GetStatus(),
 	})
 }

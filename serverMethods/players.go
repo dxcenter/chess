@@ -1,18 +1,17 @@
 package serverMethods
 
 import (
-	"fmt"
 	"database/sql"
 	"github.com/dxcenter/chess/serverMethods/helpers"
 	"github.com/gin-gonic/gin"
 	//"net/http"
 )
 
-/*type gamesParams struct {
+/*type playersParams struct {
 }*/
 
-func Games(c *gin.Context) {
-	/*var json gamesParams
+func Players(c *gin.Context) {
+	/*var json playersParams
 	if err := c.ShouldBindJSON(&json); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -20,20 +19,18 @@ func Games(c *gin.Context) {
 
 	me := helpers.GetMe(c)
 
-	games, err := me.VisibleGamesScope().Select()
+	players, err := me.VisiblePlayersScope().Select()
 	switch err {
 	case nil, sql.ErrNoRows:
 	default:
 		panic(err)
 	}
 
-	if games == nil {
-		panic(`games == nil`)
+	if players == nil {
+		panic(`players == nil`)
 	}
 
-	fmt.Println("games ==", games)
-
 	c.JSON(200, gin.H{
-		"Games": games,
+		"Players": players,
 	})
 }

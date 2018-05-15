@@ -30,6 +30,7 @@ type PlayerI interface {
 	NewGame(invitiedPlayerId int) *game
 	MyGamesScope() *gameScope
 	VisibleGamesScope() *gameScope
+	VisiblePlayersScope() *playerScope
 }
 
 const (
@@ -117,4 +118,7 @@ func (p player) MyGamesScope() *gameScope {
 }
 func (p player) VisibleGamesScope() *gameScope {
 	return Game.Where(`is_public = 1 OR id IN (SELECT game_id FROM watchers WHERE player_id = ?) OR players_pair_id IN (SELECT id FROM players_pairs WHERE player_id_0 = ? OR player_id_1 = ?)`, p.Id, p.Id, p.Id)
+}
+func (p player) VisiblePlayersScope() *playerScope {
+	return Player.Scope()
 }

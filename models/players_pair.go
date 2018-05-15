@@ -14,7 +14,7 @@ type playersPair struct {
 }
 
 func getPlayersPair(playerId0, playerId1 int) playersPair {
-	pair, err := PlayersPair.First("WHERE ( player_id_0 = ? AND player_id_1 = ? ) OR ( player_id_0 = ? AND player_id_1 = ? )", playerId0, playerId1, playerId1, playerId0)
+	pair, err := PlayersPair.First("( player_id_0 = ? AND player_id_1 = ? ) OR ( player_id_0 = ? AND player_id_1 = ? )", playerId0, playerId1, playerId1, playerId0)
 	if err == sql.ErrNoRows {
 		pair = playersPair{
 			PlayerId0: playerId0,

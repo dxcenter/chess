@@ -5,6 +5,7 @@ package models
 import (
 	"database/sql"
 	"fmt"
+	l "github.com/dxcenter/chess/logging"
 	"github.com/notnil/chess"
 )
 
@@ -33,6 +34,18 @@ func init() {
 	updatedGames = map[int]*game{}
 }
 
+func (g *game) AfterFind() {
+	fen, err := chess.FEN(g.Status)
+	if err != nil {
+		l.Error(err)
+	}
+	g.engine = chess.NewGame(fen)
+}
+
+func (g *game) BeforeSave() {
+	g.Status = g.engine.FEN()
+}
+
 func NewGame(initiatorPlayerId, invitedPlayerId int) *game {
 	result := &game{
 		engine: chess.NewGame(),
@@ -55,17 +68,20 @@ func prefetchGame(gameId int) bool {
 
 	game, err := Game.First(gameId)
 	if err == sql.ErrNoRows {
+		fmt.Printf("prefetchGame(%d): not found\n", gameId)
 		return false
 	}
 	if err != nil {
 		panic(err)
 	}
 
+	fmt.Printf("prefetchGame(%d): game == %v\n", gameId, game)
 	games[gameId] = &game
 	return true
 }
 
 func GetGame(gameId int) *game {
+	fmt.Printf("GetGame(%d)\n", gameId)
 	prefetchGame(gameId)
 	return games[gameId]
 }
