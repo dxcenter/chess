@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	cfg "github.com/dxcenter/chess/config"
 )
 
@@ -11,8 +10,20 @@ func init() {
 
 var userSources UserSources
 
+type UserSourceBase struct {
+	Name string
+}
+func (u UserSourceBase) GetName() string {
+	return u.Name
+}
+func (u UserSourceBase) SetName(newName string) {
+	u.Name = newName
+}
+
 type UserSources []UserSourceI
 type UserSourceI interface {
+	GetName() string
+	SetName(string)
 	SignIn(login, password string) (loginFixed string, success bool)
 }
 
@@ -29,15 +40,19 @@ func (userSources UserSources) SignIn(login, password string) (string, bool) {
 func Rehash() {
 	userSourcesRaw := cfg.Get().UserSources
 
-	for _, userSourceRaw := range userSourcesRaw {
+	for name, userSourceRaw := range userSourcesRaw {
+		var newUserSource UserSourceI
+
 		switch userSourceRaw.Type {
 		case "internal":
-			userSources = append(userSources, NewInternalUserSource(userSourceRaw))
+			newUserSource = NewInternalUserSource(userSourceRaw)
 		case "db":
-			userSources = append(userSources, NewDbUserSource(userSourceRaw))
+			newUserSource = NewDbUserSource(userSourceRaw)
 		}
+
+		newUserSource.SetName(name)
+		userSources = append(userSources, newUserSource)
 	}
-	fmt.Println(userSources)
 }
 
 func SignIn(login, password string) (loginFixed string, success bool) {

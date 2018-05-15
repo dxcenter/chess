@@ -8,3 +8,7 @@ type email struct {
 	Address  string `reform:"address,unique"`
 	PlayerId int    `reform:"player_id"`
 }
+
+func NewEmail() *email {
+	return &email{}
+}

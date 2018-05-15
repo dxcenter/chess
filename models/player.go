@@ -21,6 +21,10 @@ type player struct {
 	Source       *string `reform:"source,index"`
 }
 
+func NewPlayer() *player {
+	return &player{}
+}
+
 type PlayerI interface {
 	GetPlayerId() int
 	NewGame(invitiedPlayerId int) *game
@@ -95,6 +99,17 @@ func ParseCryptoHash(fullhash string) (hashfn func() hash.Hash, salt []byte, has
 	}
 
 	return hashfn, salt, hashself
+}
+
+func (player player) CheckPassword(password []byte) bool {
+	if player.PasswordHash == nil {
+		return false
+	}
+
+	hashfunct, salt, _ := ParseCryptoHash(*player.PasswordHash)
+	passwordHash := CryptoHash(password, salt, hashfunct)
+
+	return (passwordHash == *player.PasswordHash)
 }
 
 func (p player) MyGamesScope() *gameScope {

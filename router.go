@@ -8,6 +8,11 @@ import (
 )
 
 func setupRouter(r *gin.Engine) {
+	setupJsonRouter(r)
+	setupFrontendRouter(r)
+}
+
+func setupJsonRouter(r *gin.Engine) {
 	// JWT
 	jwtMiddleware := jwt.GetJwtMiddleware()
 	authed := r.Group("/")
@@ -16,6 +21,11 @@ func setupRouter(r *gin.Engine) {
 	r.POST("/auth.json", jwtMiddleware.LoginHandler)
 	r.POST("/refresh_token.json", jwtMiddleware.RefreshHandler)
 
+	// Mix of my methods and JWT
+	signUp := r.Group("/")
+	signUp.Use(mw.SignUp)
+	signUp.POST("/sign_up.json", jwtMiddleware.LoginHandler)
+
 	// My methods
 	r.GET("/ping.json", m.Ping)
 	authed.GET("/whoami.json", m.Whoami)
@@ -23,8 +33,9 @@ func setupRouter(r *gin.Engine) {
 	authed.GET("/game_status.json", m.GameStatus)
 	authed.POST("/new_game.json", m.NewGame)
 	authed.POST("/move.json", m.Move)
+}
 
-	// Frontend
+func setupFrontendRouter(r *gin.Engine) {
 	r.Static("/frontend", "frontend/build")
 	r.Static("/static", "frontend/build/static")
 	r.Static("/css", "frontend/build/css")

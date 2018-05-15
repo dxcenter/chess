@@ -12,6 +12,7 @@ func init() {
 }
 
 type DbUserSource struct {
+	UserSourceBase
 	db *reform.DB
 }
 
@@ -22,8 +23,7 @@ func NewDbUserSource(userSourceRaw cfg.UserSource) (result DbUserSource) {
 }
 
 func (s DbUserSource) SignIn(login, password string) (string, bool) {
-	passwordHash := m.HashPassword(password)
-	_, err := m.Player.DB(s.db).First(m.PlayerF{Nickname: &login, PasswordHash: &passwordHash})
+	player, err := m.Player.DB(s.db).First(m.PlayerF{Nickname: &login})
 	if err == sql.ErrNoRows {
 		return "", false
 	}
@@ -31,5 +31,21 @@ func (s DbUserSource) SignIn(login, password string) (string, bool) {
 		panic(err)
 		return "", false
 	}
-	return login, true
+	return login, player.CheckPassword([]byte(password))
+}
+
+func GetInternalDynamicUserSource() *DbUserSource {
+	myInternalDb := db.GetDB(cfg.Get().MyDb)
+
+	for _, userSourceI := range userSources {
+		userSource, ok := userSourceI.(DbUserSource)
+		if !ok {
+			continue
+		}
+		if userSource.db == myInternalDb {
+			return &userSource
+		}
+	}
+
+	return nil
 }

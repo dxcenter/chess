@@ -55,7 +55,7 @@ type UserSource struct {
 	Type string
 	Data UserSourceData
 }
-type UserSources []UserSource
+type UserSources map[string]UserSource
 
 type Dbs map[string]DbCfg
 

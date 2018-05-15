@@ -10,7 +10,7 @@ dbs:
     password: aPassword
 my_db: someDbName
 user_sources:
-  -
+  letItBeCalledStatic:
     type: internal
     data:
       users:
@@ -20,7 +20,7 @@ user_sources:
         -
           login: anotherLogin
           password: anotherPassword
-  -
+  andThisWillBeCalledDynamic
     type: db
     data:
       db_config: someDbName

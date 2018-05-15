@@ -9,6 +9,7 @@ func init() {
 }
 
 type InternalUserSource struct {
+	UserSourceBase
 	Users cfg.Users
 }
 
