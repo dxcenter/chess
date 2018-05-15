@@ -19,6 +19,7 @@ func setupRouter(r *gin.Engine) {
 	// My methods
 	r.GET("/ping.json", m.Ping)
 	authed.GET("/whoami.json", m.Whoami)
+	authed.GET("/games.json", m.Games)
 	authed.GET("/game_status.json", m.GameStatus)
 	authed.POST("/new_game.json", m.NewGame)
 	authed.POST("/move.json", m.Move)

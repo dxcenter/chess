@@ -35,18 +35,12 @@ type InternalUserSourceData struct {
 }
 
 func (d UserSourceData) ToDbUserSourceData() (result DbUserSourceData) {
-	result.Driver, _ = d["driver"].(string)
-	result.Protocol, _ = d["protocol"].(string)
-	result.Host, _ = d["host"].(string)
-	result.Port, _ = d["port"].(int)
-	result.Db, _ = d["db"].(string)
-	result.User, _ = d["user"].(string)
-	result.Password, _ = d["password"].(string)
-	result.Path, _ = d["path"].(string)
-	return
+	return DbUserSourceData(d["db_config"].(string))
 }
 
-type DbUserSourceData struct {
+type DbUserSourceData string
+
+type DbCfg struct {
 	Driver   string
 	Protocol string
 	Host     string
@@ -63,8 +57,12 @@ type UserSource struct {
 }
 type UserSources []UserSource
 
+type Dbs map[string]DbCfg
+
 type Config struct {
 	Secret      string      `yaml:"secret"`
+	Dbs         Dbs         `yaml:"dbs"`
+	MyDb        string      `yaml:"my_db"`
 	UserSources UserSources `yaml:"user_sources"`
 }
 

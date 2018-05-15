@@ -3,6 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	cfg "github.com/dxcenter/chess/config"
 	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/xaionaro/reform"
@@ -11,18 +12,17 @@ import (
 	"time"
 )
 
-type InitDBParams struct {
-	Driver   string
-	Protocol string
-	Host     string
-	Port     int
-	Db       string
-	User     string
-	Password string
-	Path     string
+var dbs map[string]*reform.DB
+
+func init() {
+	dbs = map[string]*reform.DB{}
 }
 
-func InitDB(params InitDBParams) (db *reform.DB) {
+type InitDBParams struct {
+	cfg.DbCfg
+}
+
+func initDB(params InitDBParams) (db *reform.DB) {
 	var connectionString string
 
 	switch params.Driver {
@@ -36,6 +36,13 @@ func InitDB(params InitDBParams) (db *reform.DB) {
 	db = initDbByConnectionString(params, connectionString)
 
 	return
+}
+
+func GetDB(dbBlockName string) (db *reform.DB) {
+	if dbs[dbBlockName] == nil {
+		dbs[dbBlockName] = initDB(InitDBParams{DbCfg: cfg.Get().Dbs[dbBlockName]})
+	}
+	return dbs[dbBlockName]
 }
 
 func initDbByConnectionString(params InitDBParams, connectionString string) *reform.DB {

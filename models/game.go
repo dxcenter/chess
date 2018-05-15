@@ -20,6 +20,7 @@ type game struct {
 	PlayersPairId   int    `reform:"players_pair_id"`
 	Status          string `reform:"status"`
 	InvitedPlayerId *int   `reform:"invited_player_id"`
+	IsPublic        bool   `reform:"is_public"`
 }
 
 var (
