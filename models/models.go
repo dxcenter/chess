@@ -24,7 +24,7 @@ func List() []modelI {
 
 func Init(db *reform.DB) {
 	for _, model := range List() {
-		model.SetDefaultDB(db)
 		model.Table().CreateTableIfNotExists(db)
+		model.SetDefaultDB(db)
 	}
 }
