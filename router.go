@@ -30,6 +30,7 @@ func setupJsonRouter(r *gin.Engine) {
 	r.GET("/ping.json", m.Ping)
 	authed.GET("/whoami.json", m.Whoami)
 	authed.GET("/players.json", m.Players)
+	authed.GET("/players_pairs.json", m.PlayersPairs)
 	authed.GET("/games.json", m.Games)
 	authed.GET("/games/:game_id/status.json", m.GameStatus)
 	authed.POST("/games.json", m.NewGame)

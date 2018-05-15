@@ -31,6 +31,7 @@ type PlayerI interface {
 	MyGamesScope() *gameScope
 	VisibleGamesScope() *gameScope
 	VisiblePlayersScope() *playerScope
+	VisiblePlayersPairsScope() *playersPairScope
 }
 
 const (
@@ -121,4 +122,7 @@ func (p player) VisibleGamesScope() *gameScope {
 }
 func (p player) VisiblePlayersScope() *playerScope {
 	return Player.Scope()
+}
+func (p player) VisiblePlayersPairsScope() *playersPairScope {
+	return PlayersPair.Scope()
 }

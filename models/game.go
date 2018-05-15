@@ -42,8 +42,12 @@ func (g *game) AfterFind() {
 	g.engine = chess.NewGame(fen)
 }
 
-func (g *game) BeforeSave() {
+func (g *game) BeforeUpdate() {
 	g.Status = g.engine.FEN()
+}
+
+func (g *game) BeforeInsert() {
+	g.BeforeUpdate()
 }
 
 func NewGame(initiatorPlayerId, invitedPlayerId int) *game {
