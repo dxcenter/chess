@@ -5,6 +5,7 @@ package models
 import (
 	"crypto/rand"
 	"crypto/sha512"
+	"database/sql"
 	"encoding/hex"
 	"fmt"
 	"golang.org/x/crypto/pbkdf2"
@@ -32,6 +33,7 @@ type PlayerI interface {
 	VisibleGamesScope() *gameScope
 	VisiblePlayersScope() *playerScope
 	VisiblePlayersPairsScope() *playersPairScope
+	IsMyPlayersPairId(int) bool
 }
 
 const (
@@ -125,4 +127,18 @@ func (p player) VisiblePlayersScope() *playerScope {
 }
 func (p player) VisiblePlayersPairsScope() *playersPairScope {
 	return PlayersPair.Scope()
+}
+func (p player) MyPlayersPairsScope() *playersPairScope {
+	return PlayersPair.Where("player_id_0 = ? OR player_id_1 = ?", p.Id, p.Id)
+}
+func (p player) IsMyPlayersPairId(playersPairId int) bool {
+	_, err := p.MyPlayersPairsScope().Where("id = ?", playersPairId).First()
+	switch err {
+	case nil:
+		return true
+	case sql.ErrNoRows:
+		return false
+	}
+	panic(err)
+	return false
 }

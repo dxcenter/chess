@@ -91,8 +91,11 @@ func GetGame(gameId int) *game {
 }
 
 type Status struct {
+	game
+
 	SquareMap map[chess.Square]chess.Piece
 	History   []*chess.Position
+	IsMyGame  bool
 }
 
 func (g game) check() {
@@ -111,11 +114,13 @@ func (g game) wrapperError(f func() error) error {
 	return f()
 }
 
-func (g game) GetStatus() Status {
+func (g game) GetStatus(p PlayerI) Status {
 	return g.wrapperStatus(func() Status {
 		return Status{
+			game:      g,
 			History:   g.engine.Positions(),
 			SquareMap: g.engine.Position().Board().SquareMap(),
+			IsMyGame:  p.IsMyPlayersPairId(g.PlayersPairId),
 		}
 	})
 }

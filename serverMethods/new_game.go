@@ -22,6 +22,6 @@ func NewGame(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"GameId": game.Id,
-		"GameStatus": game.GetStatus(),
+		"GameStatus": game.GetStatus(me),
 	})
 }

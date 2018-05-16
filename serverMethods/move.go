@@ -2,6 +2,7 @@ package serverMethods
 
 import (
 	m "github.com/dxcenter/chess/models"
+	"github.com/dxcenter/chess/serverMethods/helpers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -25,17 +26,19 @@ func Move(c *gin.Context) {
 		return
 	}
 
+	me := helpers.GetMe(c)
+
 	game := m.GetGame(gameId)
 	moveError := game.MoveStr(json.Move)
 	if moveError != nil {
 		c.JSON(200, gin.H{
-			"GameStatus": game.GetStatus(),
+			"GameStatus": game.GetStatus(me),
 			"MoveError":  moveError.Error(),
 		})
 		return
 	}
 	c.JSON(200, gin.H{
-		"GameStatus": game.GetStatus(),
+		"GameStatus": game.GetStatus(me),
 	})
 
 }

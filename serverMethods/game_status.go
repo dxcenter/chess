@@ -2,6 +2,7 @@ package serverMethods
 
 import (
 	m "github.com/dxcenter/chess/models"
+	"github.com/dxcenter/chess/serverMethods/helpers"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -26,7 +27,8 @@ func GameStatus(c *gin.Context) {
 		return
 	}
 
+	me := helpers.GetMe(c)
 	c.JSON(200, gin.H{
-		"GameStatus": m.GetGame(gameId).GetStatus(),
+		"GameStatus": m.GetGame(gameId).GetStatus(me),
 	})
 }
